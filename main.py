@@ -44,7 +44,7 @@ moduladaSenalCreada,tiempoModuladorSenalCreada = mod.moduladorASK(A,B,senal,len(
 #senal = senal[0:1000]
 ber = 1
 for snr in arregloSNR:
-    ber = simularTransmisionBits(senal,moduladaSenalCreada,snr)
+    ber = sim.simularTransmisionBits(senal,moduladaSenalCreada,snr)
     resultadosBER.append(ber)
 print(resultadosBER)
 
@@ -52,7 +52,7 @@ print(resultadosBER)
 graf.crearSubGrafico(arregloBits,np.linspace(0,tiempoArreglo/bps,tiempoArreglo),"Arreglo de bits","tiempo","amplitud","r",3,1,1)
 graf.crearSubGrafico(portadora,tiempoPortadora,"Portadora en el tiempo","tiempo","amplitud","g",3,1,2)
 graf.crearSubGrafico(modulada,tiempoModulador,"Modulada ASK","tiempo","amplitud","purple",3,1,3)
-plt.show()
+graf.mostrarGraficos()
 
 graf.graficar(portadora,tiempoPortadora,"Señal Portadora")
 graf.graficar(modulada,tiempoModulador,"Modulada ASK")
