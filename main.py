@@ -22,6 +22,7 @@ frecuenciaPortadora = 10*bps
 frecuenciaMuestreoPortadora = 10*frecuenciaPortadora
 largoSenalLarga = 100000
 arregloSNR = [0.5,1,-2]
+arregloBPS = [5,20,30]
 snrDb = 2
 
 #1. Obtención de la portadora
@@ -45,17 +46,23 @@ plt.show()
 ###########################################################################################################
 #Simulacion canal de comunicacion
 
+resultados = []
 resultadosBER = []
 senal = sim.crearSenalDigital(largoSenalLarga)
-modulada,tiempoModulada = mod.moduladorASK(A,B,senal,len(senal),portadora,bps)
-print("1")
 ber = 1
-for snr in arregloSNR:
-    print("2")
-    ber = sim.simularTransmisionBits(A,B,senal,modulada,snr,portadora,
+for bps in arregloBPS:
+    modulada,tiempoModulada = mod.moduladorASK(A,B,senal,len(senal),portadora,bps)
+    print("1")
+    for snr in arregloSNR:
+        print("2")
+        ber = sim.simularTransmisionBits(A,B,senal,modulada,snr,portadora,
                                     frecuenciaMuestreoPortadora, tiempoPortadora, tiempoModulada)
-    resultadosBER.append(ber)
-print(resultadosBER)
+        resultadosBER.append(ber)
+    resultados.append(resultadosBER)
+    resultadosBER = []
+
+plt.figure()
+plt.plot(arregloSNR,resultados[0],resultadosBER[1],resultados[2], "Curva BER normalizada a la razón SNR para diferentes BPS")
 
 
 
