@@ -1,10 +1,10 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import scipy as sc
 import lectura_arreglo as la
 import modulacion as mod
 import canal as ca
 import simulacion as sim
+import graficar as graf
 from scipy import integrate
 
 #Cada vez que aumenta la tasa de datos (tasa de bits), debe aumentar la frecuencia de la portadora
@@ -21,19 +21,7 @@ arregloSNR = [0.5,1,-2]
 snr = 2
 
 
-############### Todo lo relacionado a graficar (mover a otro archivo)
-def graficar(modulador, tiempoModulador, titulo):
-    plt.plot(tiempoModulador,modulador)
-    plt.title(titulo)
-    plt.grid()
-    plt.show()
 
-def crearSubGrafico(dato,valorEjeX,titulo,xLabel,yLabel,color,filas,columnas,posicion):
-    plt.subplot(filas,columnas,posicion)
-    plt.title(titulo)
-    plt.plot(valorEjeX,dato,color=color)
-    plt.xlabel(xLabel)
-    plt.ylabel(yLabel)
 
 #********************************************************************
 #******************************* Main *******************************
@@ -61,15 +49,15 @@ for snr in arregloSNR:
 print(resultadosBER)
 
 
-crearSubGrafico(arregloBits,np.linspace(0,tiempoArreglo/bps,tiempoArreglo),"Arreglo de bits","tiempo","amplitud","r",3,1,1)
-crearSubGrafico(portadora,tiempoPortadora,"Portadora en el tiempo","tiempo","amplitud","g",3,1,2)
-crearSubGrafico(modulada,tiempoModulador,"Modulada ASK","tiempo","amplitud","purple",3,1,3)
+graf.crearSubGrafico(arregloBits,np.linspace(0,tiempoArreglo/bps,tiempoArreglo),"Arreglo de bits","tiempo","amplitud","r",3,1,1)
+graf.crearSubGrafico(portadora,tiempoPortadora,"Portadora en el tiempo","tiempo","amplitud","g",3,1,2)
+graf.crearSubGrafico(modulada,tiempoModulador,"Modulada ASK","tiempo","amplitud","purple",3,1,3)
 plt.show()
 
-graficar(portadora,tiempoPortadora,"Señal Portadora")
-graficar(modulada,tiempoModulador,"Modulada ASK")
-graficar(demodulada,np.linspace(0,tiempoArreglo/bps,tiempoArreglo),"Demodulada ASK")
-graficar(senalRuido,tiempoModulador,"Señal modulada con ruido")
+graf.graficar(portadora,tiempoPortadora,"Señal Portadora")
+graf.graficar(modulada,tiempoModulador,"Modulada ASK")
+graf.graficar(demodulada,np.linspace(0,tiempoArreglo/bps,tiempoArreglo),"Demodulada ASK")
+graf.graficar(senalRuido,tiempoModulador,"Señal modulada con ruido")
 
 
 
