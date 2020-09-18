@@ -45,7 +45,7 @@ def demodularASK(A,B,modulada, portadora, tamanoSegmento, tiempoPortadora,tiempo
     for elemento1, elemento2 in zip(modulada,tiempoModulada):
         if( contador == tamanoSegmento - 1):
             areaSegmento = calcularArea(portadora*segmento,segmentoTiempo)
-            if( areaSegmento >= areaA1):
+            if( areaSegmento > areaA1):
                 demodulada.append(1)
             else:
                 demodulada.append(0)

@@ -1,12 +1,17 @@
 import numpy as np
 import modulacion as mod
+import scipy as sc
 #Entradas:      señal modulada y la señal a ruido.
 #Salida:        señal modulada con ruido
 #Descripción:   
-def simuladorRuido(modulada, snrDb):
+def simuladorRuido(modulada, tiempoModulada, snrDb):
     Nsamples = 100000
-    sampling_rate = 42000
+    sampling_rate = 4200
     potenciaSenal = np.sum(np.abs(np.fft.fft(modulada,sampling_rate//2)/Nsamples)**2)
+    #w = 1
+    #T = 2*np.pi/w
+    #energia = sc.integrate.simps(modulada**2,tiempoModulada)
+    #potenciaSenal = (1/T)*energia
     snr = 10**(snrDb/10)
     desviacionEstandar = np.sqrt(potenciaSenal/snr)
     ruido = np.random.normal(0,desviacionEstandar,len(modulada))
@@ -23,7 +28,7 @@ def crearSenalDigital(largoArregloAleatorio):
 
 #Entrada:
 def simularTransmisionBits(A,B,senalOriginal,modulada,snr,portadora,frecuenciaMuestreoPortadora, tiempoPortadora, tiempoModulador):
-    senalRuido = simuladorRuido(modulada, snr)
+    senalRuido = simuladorRuido(modulada, tiempoModulador, snr)
     demodulada = mod.demodularASK(A,B,senalRuido, portadora, frecuenciaMuestreoPortadora,tiempoPortadora,tiempoModulador)
     ber = calcularBER(senalOriginal,demodulada)
     return ber
