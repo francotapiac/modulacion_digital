@@ -1,4 +1,4 @@
-
+import numpy as np
 #Entradas:      señal modulada y la señal a ruido.
 #Salida:        señal modulada con ruido
 #Descripción:   

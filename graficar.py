@@ -7,8 +7,8 @@ def graficar(modulador, tiempoModulador, titulo):
     plt.show()
 
 def crearSubGrafico(dato,valorEjeX,titulo,xLabel,yLabel,color,filas,columnas,posicion):
-    plt.subplot(filas,columnas,posicion)
+    plt.subplot(filas,columnas,posicion, drawstyle='steps-pre')
     plt.title(titulo)
-    plt.plot(valorEjeX,dato,color=color)
+    plt.plot(valorEjeX,dato,color=color, drawstyle='steps-pre')
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)

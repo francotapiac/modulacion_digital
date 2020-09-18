@@ -32,7 +32,7 @@ tiempoPortadora = la.obtenerTiempoPortadora(bps,frecuenciaMuestreoPortadora)
 portadora = la.obtenerPortadora(frecuenciaPortadora,tiempoPortadora)
 
 #2. Modulada de la señal original
-modulada,tiempoModulador = mod.moduladorASK(A,B,arregloBits,tiempoArreglo,portadora)
+modulada,tiempoModulador = mod.moduladorASK(A,B,arregloBits,tiempoArreglo,portadora,bps)
 demodulada = mod.demodularASK(A,B,modulada, portadora, frecuenciaMuestreoPortadora,tiempoPortadora,tiempoModulador)
 
 #3. Implementación de ruido de una señal
@@ -40,7 +40,7 @@ senalRuido = sim.simuladorRuido(modulada, snr)
 
 resultadosBER = []
 senal = sim.crearSenalDigital(largoArregloAleatorio)
-moduladaSenalCreada,tiempoModuladorSenalCreada = moduladorASK(A,B,senal,len(senal),portadora)
+moduladaSenalCreada,tiempoModuladorSenalCreada = mod.moduladorASK(A,B,senal,len(senal),portadora,bps)
 #senal = senal[0:1000]
 ber = 1
 for snr in arregloSNR:

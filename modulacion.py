@@ -1,5 +1,5 @@
 import numpy as np
-
+import scipy as sc
 #Entradas:      Amplitudes A y B, arreglo de bits de la señal original, 
 #               tiempo de la señal original y la portadora obtenida
 #               según el tiempio.
@@ -8,7 +8,7 @@ import numpy as np
 #               En caso de que el bit sea 0, se multiplica la portadora
 #               por la amplituda A, en caso contrario, se multiplica por B.
 #               Finalmente, se obtiene la señal modulada y su tiempo.
-def moduladorASK(A,B,arregloBits, tiempoArreglo, portadora):
+def moduladorASK(A,B,arregloBits, tiempoArreglo, portadora, bps):
     modulador = []
     for bit in arregloBits:
         if(bit == 0):
@@ -22,7 +22,7 @@ def moduladorASK(A,B,arregloBits, tiempoArreglo, portadora):
 #Salida:        Integral de la función y respecto a x
 #Descipción:    Se obtiene el area de la función y, mediante integrate.trapz.
 def calcularArea(y,x):
-    integral = integrate.trapz(y,x)
+    integral = sc.integrate.trapz(y,x)
     return integral
 
 #Entradas:      Amplitudes A,B, señal original modulada, señal portadora, 
