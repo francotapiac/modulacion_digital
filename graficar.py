@@ -18,3 +18,6 @@ def crearSubGrafico(dato,valorEjeX,titulo,xLabel,yLabel,color,filas,columnas,pos
     plt.plot(valorEjeX,dato,color=color, drawstyle='steps-pre')
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
+
+def mostrarGraficos():
+    plt.show()
