@@ -18,7 +18,7 @@ def moduladorASK(arregloBits, tiempoArreglo, portadora, bps):
     return np.array(modulador),tiempoModulador
 
 #Entradas:      Función y, eje x de la función
-#Salida:        Integral de la función y respecto a x
+#Salida:        Integral de la función y respecto a x 
 #Descipción:    Se obtiene el area de la función y, mediante integrate.trapz.
 def calcularArea(y,x):
     integral = sc.integrate.trapz(y,x)

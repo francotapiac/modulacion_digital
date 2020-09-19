@@ -13,8 +13,11 @@ def simuladorRuido(modulada, tiempoModulada, snrDb):
     energia = sc.integrate.simps(modulada**2,tiempoModulada)
     potenciaSenal = (1/T)*energia
     potenciaSenal = modulada.var()
+    print(potenciaSenal)
     snr = 10.0**(snrDb/10.0)
+    print(snr)
     desviacionEstandar = np.sqrt(potenciaSenal/snr)
+    print(desviacionEstandar)
     ruido = np.random.normal(0,desviacionEstandar,len(modulada))
     senalRuido = modulada + ruido
     return senalRuido
