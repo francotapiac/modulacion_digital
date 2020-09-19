@@ -8,15 +8,14 @@ import scipy as sc
 #               En caso de que el bit sea 0, se multiplica la portadora
 #               por la amplituda A, en caso contrario, se multiplica por B.
 #               Finalmente, se obtiene la señal modulada y su tiempo.
-def moduladorASK(A,B,arregloBits, tiempoArreglo, portadora, bps):
+def moduladorASK(arregloBits, tiempoArreglo, portadora, bps):
     modulador = []
     for bit in arregloBits:
-        if(bit == 0):
-            modulador = np.concatenate([modulador,(A*portadora)])   
-        else:
-            modulador = np.concatenate([modulador,(B*portadora)]) 
+        for e in portadora:
+            modulador.append(bit*e)
+        #modulador = np.concatenate([modulador,(bit*portadora)])   
     tiempoModulador = np.linspace(0,tiempoArreglo/bps,len(modulador))
-    return modulador,tiempoModulador
+    return np.array(modulador),tiempoModulador
 
 #Entradas:      Función y, eje x de la función
 #Salida:        Integral de la función y respecto a x
