@@ -1,8 +1,9 @@
 import numpy as np
 
-#Entrada: 
-#Salida:        arreglo de bits definido en el mismo  código
-#Descripción:   crea un arreglo de bits de tamaño fijo
+# Entradas: largo -> entero que representa el largo del array a crear
+#Salidas:   void
+#------------------------------------------
+#Esta funcion genera una señal digital aleatoria
 def generarSenal(largo):
     senal = np.random.randint(2,size = largo)
     return senal
