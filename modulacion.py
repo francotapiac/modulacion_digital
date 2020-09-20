@@ -17,7 +17,7 @@ def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
     portadora = np.cos(2*np.pi*freqPortadora*tiempoPortadora)
     #Graficar Portadora en el tiempo
     if(cond):
-        graf.graficar(portadora, tiempoPortadora, "Señal Portadora en el tiempo", "Tiempo (s)", "Amplitud")
+        graf.graficar(portadora, tiempoPortadora, "Señal Portadora en el tiempo", "Tiempo (s)", "Amplitud","f(t) = 3*cos(2pi*f*t)")
 
     #Algoritmo para modular
     senalModulada = []

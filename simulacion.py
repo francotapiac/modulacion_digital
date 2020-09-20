@@ -2,7 +2,7 @@ import numpy as np
 import modulacion as mod
 import graficar as graf
 import scipy as sc
-def simuladorRuido(senal, tiempoModulada, snrDb):
+def simuladorRuido(senal, tiempoModulada, snrDb, cond):
     w = 1
     T = 2*np.pi/w
     energia = sc.integrate.simps(senal**2,tiempoModulada)
@@ -13,6 +13,8 @@ def simuladorRuido(senal, tiempoModulada, snrDb):
     desviacionEstandar = np.sqrt(potenciaSenal/snr)
     print(desviacionEstandar)
     ruido = np.random.normal(0,desviacionEstandar,len(senal))
+    if(cond):
+        graf.graficarRuido(ruido,'Ruido AWGN con SNR = '+str(snrDb)+ '(dB)', 'Tiempo (s)', 'Amplitud', 'SNR = '+str(snrDb)+ '(dB)')
     senalRuido = senal + ruido
     return senalRuido
 
@@ -33,8 +35,7 @@ def simulacion(senalOriginal, modulada, tiempoModulada, arraySNRinDb, freqPortad
     for snrDb in arraySNRinDb:
         ber = 0
         #Agregar Ruido
-        moduladaRuido = simuladorRuido(modulada, tiempoModulada, snrDb)
-        #graf.graficar(moduladaRuido, tiempoModulada, "Señal Modulada con Ruido AWGN - SNR="+str(snrDb) + " BPS="+str(bps), "Tiempo (s)", "Amplitud")
+        moduladaRuido = simuladorRuido(modulada, tiempoModulada, snrDb, False)
         #Demodular la Señal
         demodulada = mod.demodularASK(moduladaRuido, bps, freqPortadora, freqMuestreoPortadora)
         #Calcular BER
