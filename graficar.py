@@ -18,9 +18,9 @@ def graficarSenalDigital(senal, tiempo, titulo, xLabel, yLabel):
 
 def graficarResultadosBER(resultado, arraySNR):
     plt.figure()
-    plt.plot(arraySNR, resultado[0], 'bo', arraySNR, resultado[0], 'k',color="red" )
-    plt.plot(arraySNR, resultado[1], 'bo', arraySNR, resultado[1], 'k', color="blue")
-    plt.plot(arraySNR, resultado[2], 'bo', arraySNR, resultado[2], 'k', color="green")
+    plt.plot(arraySNR, resultado[0], 'o-',color="red" , label="bps = 10")
+    plt.plot(arraySNR, resultado[1], 'o-', color="blue", label="bps = 20")
+    plt.plot(arraySNR, resultado[2], 'o-', color="green", label="bps = 30")
     #plt.axis([0, 10, 1e-6, 0.1])
     plt.xscale('linear')
     plt.yscale('log')
@@ -28,6 +28,7 @@ def graficarResultadosBER(resultado, arraySNR):
     plt.ylabel('BER')
     plt.grid(True)
     plt.title('BER vs SNR')
+    plt.legend(loc='lower left')
 
 def mostrarGraficos():
     plt.show()
