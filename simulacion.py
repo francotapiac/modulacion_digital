@@ -16,11 +16,8 @@ def simuladorRuido(senal, tiempoModulada, snrDb, cond):
     T = 2*np.pi/w
     energia = sc.integrate.simps(senal**2,tiempoModulada)
     potenciaSenal = (1/T)*energia
-    print(potenciaSenal)
     snr = 10.0**(snrDb/10.0)
-    print(snr)
     desviacionEstandar = np.sqrt(potenciaSenal/snr)
-    print(desviacionEstandar)
     ruido = np.random.normal(0,desviacionEstandar,len(senal))
     if(cond):
         graf.graficarRuido(ruido,'Ruido AWGN con SNR = '+str(snrDb)+ '(dB)', 'Tiempo (s)', 'Amplitud', 'SNR = '+str(snrDb)+ '(dB)')
