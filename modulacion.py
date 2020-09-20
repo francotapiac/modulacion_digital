@@ -2,14 +2,18 @@ import numpy as np
 import scipy as sc
 import graficar as graf
 from scipy import integrate
-#Entradas:      Amplitudes A y B, arreglo de bits de la señal original, 
-#               tiempo de la señal original y la portadora obtenida
-#               según el tiempio.
-#Salidas:       Señal original modulada y el tiempo de la señal modulada    
-#Descripcion:   para cada bit de la señal original se verifica su valor. 
-#               En caso de que el bit sea 0, se multiplica la portadora
-#               por la amplituda A, en caso contrario, se multiplica por B.
-#               Finalmente, se obtiene la señal modulada y su tiempo.
+# Entradas: senal -> array con los datos de la señal
+#           bps -> Tasa de bits por segundo utilizada
+#           freqPortadora -> frecuencia de la señal portadora utilizada
+#           freqMuestreoPortadora -> frecuencia de muestreo de la señal portadora utilizada
+#           cond -> booleano utilizado para saber si se grafica o no
+# Salidas:  senalModulada -> array con los datos de la señal modulada
+#           tiempoModulada -> array que representa el tiempo
+#------------------------------------------
+# En esta funcion primero se genera una señal portadora dependiendo del bps ingresado. 
+# Luego para cada bit en la señal digital ingresada se multiplicada por cada dato de la 
+# señal portadora y el resultado se guarda en un array
+# Finalmente, se obtiene el tiempo de la señal modulada.
 def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
     #Generar Intervalo de tiempo para la portadora
     tiempoPortadora = np.linspace(0,1/bps,freqMuestreoPortadora)
@@ -29,11 +33,18 @@ def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
     return np.array(senalModulada),tiempoModulada
     #Generar intervalo de tiempo para la modulada
 
-#Entradas:      Amplitudes A,B, señal original modulada, señal portadora, 
-#               freucencua de muestreo de la portadora (tamanoSegmento),
-#               tiempo de la portadora y tiempo de la señal modulada.
-#Salida:        Señal demodulada
-#Descripción:   
+# Entradas: senal -> array con los datos de la señal modulada
+#           bps -> Tasa de bits por segundo utilizada
+#           freqPortadora -> frecuencia de la señal portadora utilizada
+#           freqMuestreoPortadora -> frecuencia de muestreo de la señal portadora utilizada
+# Salidas:  demodulada -> array con los datos de la señal demodulada
+#------------------------------------------  
+# En esta funcion primero se genera una portadora. Luego se calcula 
+# un area aproximada de la portadora. Despues se recorre la señal modulada
+# por cada segmento que representa un bit. A dicho segmento se le calcula 
+# el area y se compara con el area ya calculada. Si el area es mayor o igual
+# es un bit 1 sino es 0. Dichos bits se van guardando en un arreglo
+# Finalmente se retorna el arreglo.
 def demodularASK(modulada, bps,freqPortadora, freqMuestreoPortadora):
     #Generar Intervalo de tiempo para la portadora
     tiempoPortadora = np.linspace(0,1/bps,freqMuestreoPortadora)
@@ -51,7 +62,4 @@ def demodularASK(modulada, bps,freqPortadora, freqMuestreoPortadora):
             demodulada.append(0)
         inicio = fin
         fin = fin + len(tiempoPortadora)
-    
-    print("demodulada: ")
-    print(np.array(demodulada))
     return demodulada
