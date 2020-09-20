@@ -1,23 +1,33 @@
 import matplotlib.pyplot as plt
 
-def graficar(modulador, tiempoModulador, titulo):
+def graficar(senal, tiempo, titulo, xLabel, yLabel):
     plt.figure()
-    plt.plot(tiempoModulador,modulador)
+    plt.plot(tiempo, senal)
     plt.title(titulo)
+    plt.xlabel(xLabel)
+    plt.ylabel(yLabel)
     plt.grid()
 
-def graficarSenalEnTiempo(senal, tiempo, titulo):
+def graficarSenalDigital(senal, tiempo, titulo, xLabel, yLabel):
     plt.figure()
     plt.plot(tiempo,senal, drawstyle='steps-pre')
     plt.title(titulo)
-    plt.grid()
-
-def crearSubGrafico(dato,valorEjeX,titulo,xLabel,yLabel,color,filas,columnas,posicion):
-    plt.subplot(filas,columnas,posicion)
-    plt.title(titulo)
-    plt.plot(valorEjeX,dato,color=color, drawstyle='steps-pre')
     plt.xlabel(xLabel)
     plt.ylabel(yLabel)
+    plt.grid()
+
+def graficarResultadosBER(resultado, arraySNR):
+    plt.figure()
+    plt.plot(arraySNR, resultado[0], 'bo', arraySNR, resultado[0], 'k',color="red" )
+    plt.plot(arraySNR, resultado[1], 'bo', arraySNR, resultado[1], 'k', color="blue")
+    plt.plot(arraySNR, resultado[2], 'bo', arraySNR, resultado[2], 'k', color="green")
+    #plt.axis([0, 10, 1e-6, 0.1])
+    plt.xscale('linear')
+    plt.yscale('log')
+    plt.xlabel('SNR(dB)')
+    plt.ylabel('BER')
+    plt.grid(True)
+    plt.title('BER vs SNR')
 
 def mostrarGraficos():
     plt.show()

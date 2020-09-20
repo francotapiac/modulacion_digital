@@ -1,41 +1,20 @@
 import numpy as np
 import modulacion as mod
+import graficar as graf
 import scipy as sc
-#Entradas:      señal modulada y la señal a ruido.
-#Salida:        señal modulada con ruido
-#Descripción:   
-def simuladorRuido(modulada, tiempoModulada, snrDb):
-    Nsamples = 100000
-    sampling_rate = 42000
-    potenciaSenal = np.sum(np.abs(np.fft.fft(modulada,sampling_rate//2)/Nsamples)**2)
+def simuladorRuido(senal, tiempoModulada, snrDb):
     w = 1
     T = 2*np.pi/w
-    energia = sc.integrate.simps(modulada**2,tiempoModulada)
+    energia = sc.integrate.simps(senal**2,tiempoModulada)
     potenciaSenal = (1/T)*energia
-    potenciaSenal = modulada.var()
     print(potenciaSenal)
     snr = 10.0**(snrDb/10.0)
     print(snr)
     desviacionEstandar = np.sqrt(potenciaSenal/snr)
     print(desviacionEstandar)
-    ruido = np.random.normal(0,desviacionEstandar,len(modulada))
-    senalRuido = modulada + ruido
+    ruido = np.random.normal(0,desviacionEstandar,len(senal))
+    senalRuido = senal + ruido
     return senalRuido
-
-#Entrada:       largo del arreglo aleatorio
-#Salida:        señal digital con valores aleatorios
-#Descripción:   se obtiene una señal con 0 y 1 de forma aleatoria, con
-#               un largo definido.
-def crearSenalDigital(largoArregloAleatorio):
-    senal = np.random.randint(2,size = largoArregloAleatorio)
-    return senal
-
-#Entrada:
-def simularTransmisionBits(A,B,senalOriginal,modulada,snr,portadora,frecuenciaMuestreoPortadora, tiempoPortadora, tiempoModulador):
-    senalRuido = simuladorRuido(modulada, tiempoModulador, snr)
-    demodulada = mod.demodularASK(A,B,senalRuido, portadora, frecuenciaMuestreoPortadora,tiempoPortadora,tiempoModulador)
-    ber = calcularBER(senalOriginal,demodulada)
-    return ber
 
 def calcularBER(senalOriginal,senalDemodulada):
     cantidadDiferentes = 0
@@ -44,3 +23,24 @@ def calcularBER(senalOriginal,senalDemodulada):
             cantidadDiferentes = cantidadDiferentes + 1
     ber = cantidadDiferentes/len(senalOriginal)
     return ber
+
+def simulacion(senalOriginal, modulada, tiempoModulada, arraySNRinDb, freqPortadora, freqMuestreoPortadora, bps):
+    #array para guardar los ber calculados para cada señal con diferentes snr
+    moduladaRuido = []
+    demodulada = []
+    BER = [None]*len(arraySNRinDb)
+    i = 0
+    for snrDb in arraySNRinDb:
+        ber = 0
+        #Agregar Ruido
+        moduladaRuido = simuladorRuido(modulada, tiempoModulada, snrDb)
+        #graf.graficar(moduladaRuido, tiempoModulada, "Señal Modulada con Ruido AWGN - SNR="+str(snrDb) + " BPS="+str(bps), "Tiempo (s)", "Amplitud")
+        #Demodular la Señal
+        demodulada = mod.demodularASK(moduladaRuido, bps, freqPortadora, freqMuestreoPortadora)
+        #Calcular BER
+        ber = calcularBER(senalOriginal, demodulada)
+        print("ber: "+ str(ber))
+        #Guardar ber
+        BER[i] = ber
+        i +=1
+    return BER

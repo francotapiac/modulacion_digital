@@ -1,5 +1,7 @@
 import numpy as np
 import scipy as sc
+import graficar as graf
+from scipy import integrate
 #Entradas:      Amplitudes A y B, arreglo de bits de la señal original, 
 #               tiempo de la señal original y la portadora obtenida
 #               según el tiempio.
@@ -8,51 +10,48 @@ import scipy as sc
 #               En caso de que el bit sea 0, se multiplica la portadora
 #               por la amplituda A, en caso contrario, se multiplica por B.
 #               Finalmente, se obtiene la señal modulada y su tiempo.
-def moduladorASK(arregloBits, tiempoArreglo, portadora, bps):
-    modulador = []
-    for bit in arregloBits:
-        for e in portadora:
-            modulador.append(bit*e)
-        #modulador = np.concatenate([modulador,(bit*portadora)])   
-    tiempoModulador = np.linspace(0,tiempoArreglo/bps,len(modulador))
-    return np.array(modulador),tiempoModulador
+def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
+    #Generar Intervalo de tiempo para la portadora
+    tiempoPortadora = np.linspace(0,1/bps,freqMuestreoPortadora)
+    #Generar Portadora
+    portadora = np.cos(2*np.pi*freqPortadora*tiempoPortadora)
+    #Graficar Portadora en el tiempo
+    if(cond):
+        graf.graficar(portadora, tiempoPortadora, "Señal Portadora en el tiempo", "Tiempo (s)", "Amplitud")
 
-#Entradas:      Función y, eje x de la función
-#Salida:        Integral de la función y respecto a x 
-#Descipción:    Se obtiene el area de la función y, mediante integrate.trapz.
-def calcularArea(y,x):
-    integral = sc.integrate.trapz(y,x)
-    return integral
+    #Algoritmo para modular
+    senalModulada = []
+    for bit in senal:
+        for dato in portadora:
+            senalModulada.append(3*bit*dato)
+        #modulador = np.concatenate([modulador,(bit*portadora)])   
+    tiempoModulada = np.linspace(0,len(senal)/bps,len(senalModulada))
+    return np.array(senalModulada),tiempoModulada
+    #Generar intervalo de tiempo para la modulada
 
 #Entradas:      Amplitudes A,B, señal original modulada, señal portadora, 
 #               freucencua de muestreo de la portadora (tamanoSegmento),
 #               tiempo de la portadora y tiempo de la señal modulada.
 #Salida:        Señal demodulada
 #Descripción:   
-def demodularASK(A,B,modulada, portadora, tamanoSegmento, tiempoPortadora,tiempoModulada):
-    areaA1 = 0
-    if(A < B):
-        areaA1 = calcularArea(A*portadora*portadora,tiempoPortadora)
-    else:
-        areaA1 = calcularArea(B*portadora*portadora,tiempoPortadora)
-    portadora = portadora[0:len(portadora) - 1]
+def demodularASK(modulada, bps,freqPortadora, freqMuestreoPortadora):
+    #Generar Intervalo de tiempo para la portadora
+    tiempoPortadora = np.linspace(0,1/bps,freqMuestreoPortadora)
+    #Generar Portadora
+    portadora = np.cos(2*np.pi*freqPortadora*tiempoPortadora)
+    areaEstandar = integrate.trapz(2*portadora*portadora, tiempoPortadora)
+    inicio = 0
+    fin = len(tiempoPortadora)
     demodulada = []
-    segmento = []
-    segmentoTiempo = []
-    contador = 0
-    areaSegmento = 0
-    for elemento1, elemento2 in zip(modulada,tiempoModulada):
-        if( contador == tamanoSegmento - 1):
-            areaSegmento = calcularArea(portadora*segmento,segmentoTiempo)
-            if( areaSegmento > areaA1):
-                demodulada.append(1)
-            else:
-                demodulada.append(0)
-            segmentoTiempo = []
-            segmento = []
-            contador = 0
+    for i in range(0,len(modulada), len(tiempoPortadora)):
+        area = integrate.trapz(portadora*modulada[inicio:fin], tiempoPortadora)
+        if(area >= areaEstandar):
+            demodulada.append(1)
         else:
-            segmento.append(elemento1)
-            segmentoTiempo.append(elemento2)
-            contador = contador + 1  
+            demodulada.append(0)
+        inicio = fin
+        fin = fin + len(tiempoPortadora)
+    
+    print("demodulada: ")
+    print(np.array(demodulada))
     return demodulada
