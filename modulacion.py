@@ -2,6 +2,8 @@ import numpy as np
 import scipy as sc
 import graficar as graf
 from scipy import integrate
+from scipy.signal import butter, lfilter, freqz
+
 # Entradas: senal -> array con los datos de la señal
 #           bps -> Tasa de bits por segundo utilizada
 #           freqPortadora -> frecuencia de la señal portadora utilizada
@@ -45,21 +47,37 @@ def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
 # el area y se compara con el area ya calculada. Si el area es mayor o igual
 # es un bit 1 sino es 0. Dichos bits se van guardando en un arreglo
 # Finalmente se retorna el arreglo.
-def demodularASK(modulada, bps,freqPortadora, freqMuestreoPortadora):
+def demodularASK(modulada, tiempoModulada, bps,freqPortadora, freqMuestreoPortadora):
+    order = 4
+    fs = 90.0       # sample rate, Hz
+    cutoff = 1.3
     #Generar Intervalo de tiempo para la portadora
     tiempoPortadora = np.linspace(0,1/bps,freqMuestreoPortadora)
     #Generar Portadora
-    portadora = np.cos(2*np.pi*freqPortadora*tiempoPortadora)
-    areaEstandar = integrate.trapz(2*portadora*portadora, tiempoPortadora)
+    portadora = 3*np.cos(2*np.pi*freqPortadora*tiempoPortadora)
     inicio = 0
     fin = len(tiempoPortadora)
     demodulada = []
     for i in range(0,len(modulada), len(tiempoPortadora)):
-        area = integrate.trapz(portadora*modulada[inicio:fin], tiempoPortadora)
-        if(area >= areaEstandar):
+        rectificada = portadora*modulada[inicio:fin]
+        filtrada = butter_lowpass_filter(rectificada, cutoff, fs, order)
+        avg = np.average(filtrada)
+        #avg = np.median(filtrada[inicio:fin])
+        if(avg > 2.5):
             demodulada.append(1)
         else:
             demodulada.append(0)
         inicio = fin
         fin = fin + len(tiempoPortadora)
     return demodulada
+
+def butter_lowpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = butter(order, normal_cutoff, btype='low', analog=False)
+    return b, a
+
+def butter_lowpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_lowpass(cutoff, fs, order=order)
+    y = lfilter(b, a, data)
+    return y

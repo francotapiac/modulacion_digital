@@ -17,8 +17,8 @@ def simuladorRuido(senal, tiempoModulada, snrDb, cond):
     energia = sc.integrate.simps(senal**2,tiempoModulada)
     potenciaSenal = (1/T)*energia
     snr = 10.0**(snrDb/10.0)
-    desviacionEstandar = np.sqrt(potenciaSenal/snr)
-    ruido = np.random.normal(0,desviacionEstandar,len(senal))
+    sigma = np.sqrt(potenciaSenal/snr)
+    ruido = sigma*np.random.normal(0,1,len(senal))
     if(cond):
         graf.graficarRuido(ruido,'Ruido AWGN con SNR = '+str(snrDb)+ '(dB)', 'Tiempo (s)', 'Amplitud', 'SNR = '+str(snrDb)+ '(dB)')
     senalRuido = senal + ruido
@@ -30,12 +30,12 @@ def simuladorRuido(senal, tiempoModulada, snrDb, cond):
 #------------------------------------------
 # Esta funcion cuenta los bits diferentes entre la señal original 
 # y la señal demodulada y calcula la tasa de error de bits
-def calcularBER(senalOriginal,senalDemodulada):
-    cantidadDiferentes = 0
-    for elemento1,elemento2 in zip(senalOriginal,senalDemodulada):
-        if(elemento1 != elemento2):
-            cantidadDiferentes = cantidadDiferentes + 1
-    ber = cantidadDiferentes/len(senalOriginal)
+def calcularBER(senalDigital,dem):
+    cont = 0
+    for i in range(len(dem)):   
+        if(senalDigital[i] != dem[i]):
+            cont = cont +1
+    ber = cont/len(dem)
     return ber
 
 # Entradas: senalOriginal -> array con los datos de la señal
@@ -61,7 +61,7 @@ def simulacion(senalOriginal, modulada, tiempoModulada, arraySNRinDb, freqPortad
         #Agregar Ruido
         moduladaRuido = simuladorRuido(modulada, tiempoModulada, snrDb, False)
         #Demodular la Señal
-        demodulada = mod.demodularASK(moduladaRuido, bps, freqPortadora, freqMuestreoPortadora)
+        demodulada = mod.demodularASK(moduladaRuido, tiempoModulada, bps, freqPortadora, freqMuestreoPortadora)
         #Calcular BER
         ber = calcularBER(senalOriginal, demodulada)
         print("ber: "+ str(ber))

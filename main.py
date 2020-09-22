@@ -23,7 +23,7 @@ from numpy.random import rand, randn
 ########################################################################################################
 #Datos Iniciales
 largoSenal = 10
-bps = 5
+bps = 10
 freqPortadora = 3*bps
 freqMuestreoPortadora = 5*freqPortadora
 snrDb = 1
@@ -32,6 +32,7 @@ snrDb = 1
 #Prueba para un caso pequeño
 #         Generar Señal
 senalDigital = [0,0,0,1,0,0,1,0,0,1]
+#senalDigital = senal.generarSenal(10000)
 tiempo = np.linspace(0,len(senalDigital)/bps,len(senalDigital))
 graf.graficarSenalDigital(senalDigital, tiempo, "Señal Digital en el Tiempo", "Tiempo (s)", "Amplitud", "BPS = 5")
 
@@ -40,30 +41,33 @@ modulada, tiempoModulada = mod.modularASK(senalDigital, bps, freqPortadora, freq
 graf.graficar(modulada, tiempoModulada, "Señal Modulada en ASK", "Tiempo (s)", "Amplitud", "Modulada")
 
 #          Agregar Ruido
-moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, 7, True)     #SNR = 7
-moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, snrDb, True) #SNR = 1
+moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, 7, False)     #SNR = 7
+moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, snrDb, False) #SNR = 1
 graf.graficar(moduladaRuido, tiempoModulada, "Señal Modulada con Ruido AWGN", "Tiempo (s)", "Amplitud", "ASK con SNR = 1")
 
 #          Demodular la Señal
-demodulada = mod.demodularASK(moduladaRuido, bps, freqPortadora, freqMuestreoPortadora)
+demodulada = mod.demodularASK(moduladaRuido, tiempoModulada, bps, freqPortadora, freqMuestreoPortadora)
+
+BER = sim.simulacion(senalDigital, modulada, tiempoModulada, [1], freqPortadora, freqMuestreoPortadora, bps)
+print("MI BER: "+str(BER))    
 
 ########################################################################################################
 #Simulacion Caso grande
 largoSenal = 10000
-arraySNRinDb = range(-2,20)
-arrayBPS = [10,15,20]
+arraySNRinDb = range(-1,17)
+arrayBPS = [5,10,15]
 resultadoSimulacion = [None]*len(arrayBPS)
 i = 0
 # Para cada bps
 for bps in arrayBPS:
     BER = []
-    freqPortadora = 2*bps
-    freqMuestreoPortadora = 3*freqPortadora
+    freqPortadora = 30
+    freqMuestreoPortadora = 2000//bps
     senalDigital = senal.generarSenal(largoSenal)
     modulada, tiempoModulada = mod.modularASK(senalDigital, bps, freqPortadora, freqMuestreoPortadora, False)
     BER = sim.simulacion(senalDigital, modulada, tiempoModulada, arraySNRinDb, freqPortadora, freqMuestreoPortadora, bps)
     resultadoSimulacion[i] = BER
-    i += 1
+    i = i+ 1
 graf.graficarResultadosBER(resultadoSimulacion, arraySNRinDb)
 
 ########################################################################################################
