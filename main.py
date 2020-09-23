@@ -23,16 +23,15 @@ from numpy.random import rand, randn
 ########################################################################################################
 #Datos Iniciales
 largoSenal = 10
-bps = 10
+bps = 5
 freqPortadora = 3*bps
-freqMuestreoPortadora = 5*freqPortadora
+freqMuestreoPortadora = 10*freqPortadora
 snrDb = 1
 
 ########################################################################################################
 #Prueba para un caso pequeño
 #         Generar Señal
-senalDigital = [0,0,0,1,0,0,1,0,0,1]
-#senalDigital = senal.generarSenal(10000)
+senalDigital = [1,0,0,1,0,0,1,1,0,0]
 tiempo = np.linspace(0,len(senalDigital)/bps,len(senalDigital))
 graf.graficarSenalDigital(senalDigital, tiempo, "Señal Digital en el Tiempo", "Tiempo (s)", "Amplitud", "BPS = 5")
 
@@ -41,19 +40,30 @@ modulada, tiempoModulada = mod.modularASK(senalDigital, bps, freqPortadora, freq
 graf.graficar(modulada, tiempoModulada, "Señal Modulada en ASK", "Tiempo (s)", "Amplitud", "Modulada")
 
 #          Agregar Ruido
-moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, 7, False)     #SNR = 7
-moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, snrDb, False) #SNR = 1
+moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, 10, True)
+moduladaRuido = sim.simuladorRuido(modulada, tiempoModulada, snrDb, True) #SNR = 1
 graf.graficar(moduladaRuido, tiempoModulada, "Señal Modulada con Ruido AWGN", "Tiempo (s)", "Amplitud", "ASK con SNR = 1")
+
+#          Generar grafico de señal Rectificada
+portadora = 3*np.cos(2*np.pi*freqPortadora*tiempoModulada)
+rectificada = portadora * moduladaRuido
+graf.graficar(rectificada, tiempoModulada, "Señal ASK Rectificada", "Tiempo (s)", "Amplitud", "Señal ASK*portadora")
+
+#          Generar grafico de señal Filtrada (Filtro pasa Bajos)
+order = 4
+fs = 90.0       # sample rate, Hz
+cutoff = 1.3
+filtrada = mod.butter_lowpass_filter(rectificada, cutoff, fs, order)
+graf.graficar(filtrada, tiempoModulada, "Señal Filtrada", "Tiempo (s)", "Amplitud", "filtrada")
 
 #          Demodular la Señal
 demodulada = mod.demodularASK(moduladaRuido, tiempoModulada, bps, freqPortadora, freqMuestreoPortadora)
+graf.graficarSenalDigital(demodulada, tiempo, "Señal Demodulada", "Tiempo (s)", "Amplitud", "ASK demodulada")
 
-BER = sim.simulacion(senalDigital, modulada, tiempoModulada, [1], freqPortadora, freqMuestreoPortadora, bps)
-print("MI BER: "+str(BER))    
-
+graf.mostrarGraficos()
 ########################################################################################################
 #Simulacion Caso grande
-largoSenal = 10000
+largoSenal = 100000
 arraySNRinDb = range(-1,17)
 arrayBPS = [5,10,15]
 resultadoSimulacion = [None]*len(arrayBPS)

@@ -20,7 +20,7 @@ def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
     #Generar Intervalo de tiempo para la portadora
     tiempoPortadora = np.linspace(0,1/bps,freqMuestreoPortadora)
     #Generar Portadora
-    portadora = np.cos(2*np.pi*freqPortadora*tiempoPortadora)
+    portadora = 3*np.cos(2*np.pi*freqPortadora*tiempoPortadora)
     #Graficar Portadora en el tiempo
     if(cond):
         graf.graficar(portadora, tiempoPortadora, "Señal Portadora en el tiempo", "Tiempo (s)", "Amplitud","f(t) = 3*cos(2pi*f*t)")
@@ -29,11 +29,10 @@ def modularASK(senal, bps, freqPortadora, freqMuestreoPortadora, cond):
     senalModulada = []
     for bit in senal:
         for dato in portadora:
-            senalModulada.append(3*bit*dato)
+            senalModulada.append(bit*dato)
         #modulador = np.concatenate([modulador,(bit*portadora)])   
     tiempoModulada = np.linspace(0,len(senal)/bps,len(senalModulada))
     return np.array(senalModulada),tiempoModulada
-    #Generar intervalo de tiempo para la modulada
 
 # Entradas: senal -> array con los datos de la señal modulada
 #           bps -> Tasa de bits por segundo utilizada
@@ -61,8 +60,8 @@ def demodularASK(modulada, tiempoModulada, bps,freqPortadora, freqMuestreoPortad
     for i in range(0,len(modulada), len(tiempoPortadora)):
         rectificada = portadora*modulada[inicio:fin]
         filtrada = butter_lowpass_filter(rectificada, cutoff, fs, order)
+        #Estapa de desicion
         avg = np.average(filtrada)
-        #avg = np.median(filtrada[inicio:fin])
         if(avg > 2.5):
             demodulada.append(1)
         else:

@@ -99,7 +99,7 @@ plt.figure()
 plt.plot(tiempoModulada,modulada)
 plt.title("Modulada")
 #          Agregar Ruido
-"""
+
 moduladaRuido1 = sim.simuladorRuido(modulada, tiempoModulada, snrDb1, False)     #SNR = 7
 plt.figure()
 plt.plot(tiempoModulada,moduladaRuido1)
