@@ -51,6 +51,7 @@ def calcularBER(senalDigital,dem):
 # ingresada como parametro luego demodula y va calculando las tasas de error de bits
 # los ber calculados se guardan y se retornan en un array
 def simulacion(senalOriginal, modulada, tiempoModulada, arraySNRinDb, freqPortadora, freqMuestreoPortadora, bps):
+    
     #array para guardar los ber calculados para cada señal con diferentes snr
     moduladaRuido = []
     demodulada = []
@@ -64,7 +65,6 @@ def simulacion(senalOriginal, modulada, tiempoModulada, arraySNRinDb, freqPortad
         demodulada = mod.demodularASK(moduladaRuido, tiempoModulada, bps, freqPortadora, freqMuestreoPortadora)
         #Calcular BER
         ber = calcularBER(senalOriginal, demodulada)
-        print("ber: "+ str(ber))
         #Guardar ber
         BER[i] = ber
         i +=1
